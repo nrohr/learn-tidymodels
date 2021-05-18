@@ -46,6 +46,9 @@ summary(credit_rec)
 But we can do more than just specify our data and formula. We can also add steps for adding, removing, or transforming our variables. We can also explicitly identify categorical variables and add dummy variables.
 
 ```{r}
+# ggplot(credit_data, aes(x = Income)) +
+#   geom_histogram()
+
 credit_rec <- 
   recipe(Status ~ ., data = credit_data) %>% 
   step_dummy(all_nominal(), -all_outcomes()) %>%   # Create dummy vars for all nominal vars, except outcomes
@@ -112,8 +115,7 @@ Let's merge these columns back into our test data and see how our model performe
 
 ```{r}
 credit_pred <- 
-  predict(credit_fit, test_data, type = "prob") %>% 
-  bind_cols(test_data) %>% 
+  bind_cols(predict(credit_fit, test_data, type = "prob"), test_data) %>% 
   bind_cols(predict(credit_fit, test_data)) %>% 
   select(.pred_bad, .pred_good, .pred_class, everything())
 
